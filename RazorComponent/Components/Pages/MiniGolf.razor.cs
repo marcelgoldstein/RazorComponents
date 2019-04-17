@@ -26,7 +26,10 @@ namespace RazorComponent.Components.Pages
             this.AddTrack();
             this.AddTrack();
             this.AddTrack();
+            this.AddTrack();
+            this.AddTrack();
 
+            this.AddPlayer(null);
             this.AddPlayer(null);
             this.AddPlayer(null);
 
@@ -47,18 +50,15 @@ namespace RazorComponent.Components.Pages
                 name = $"Player {this.Players.Count + 1}";
             }
 
-            //if (this.Players.Count < 10)
-            //{
-                var p = new Player() { Name = name };
-                this.Players.Add(p);
-                foreach (var track in this.Tracks)
-                { // bei allen bestehenden tracks den neuen player hinzufügen
-                    track.PlayerHits[p] = null;
-                }
+            var p = new Player() { Name = name };
+            this.Players.Add(p);
+            foreach (var track in this.Tracks)
+            { // bei allen bestehenden tracks den neuen player hinzufügen
+                track.PlayerHits[p] = null;
+            }
 
-                this.PlayerNameToAdd = null;
-                this.RepositionEditColumn();
-            //}
+            this.PlayerNameToAdd = null;
+            this.RepositionEditColumn();
         }
 
         protected void RemovePlayer()
@@ -131,16 +131,7 @@ namespace RazorComponent.Components.Pages
             {
                 this.CurrentTrack = t;
 
-                //if (this.CurrentTrack == t)
-                //{
-                //    this.CurrentTrack = null;
-                //}
-                //else
-                //{
-                //    this.CurrentTrack = t;
-                //}
-
-                this.StateHasChanged(); 
+                this.StateHasChanged();
             }
         }
 
