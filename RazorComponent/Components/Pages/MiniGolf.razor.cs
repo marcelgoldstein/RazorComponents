@@ -1,18 +1,19 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
-using Telerik.Blazor.Components.Grid;
 
 namespace RazorComponent.Components.Pages
 {
     public class MiniGolfModel : ComponentBase
     {
         public string PlayerNameToAdd { get; set; }
-        public List<Player> Players { get; set; } = new List<Player>();
+        public ObservableCollection<Player> Players { get; set; } = new ObservableCollection<Player>();
+        public List<Player> RankedPlayers { get; set; } = new List<Player>();
 
-        public int TrackParNumberToAdd { get; set; } = 4;
+        public int TrackParNumberToAdd { get; set; } = 3;
         public List<Track> Tracks { get; set; } = new List<Track>();
 
         public bool LastColumnToggleWorkaroundForDisplayIndex { get; set; } = true;
@@ -23,6 +24,8 @@ namespace RazorComponent.Components.Pages
 
         protected override Task OnInitAsync()
         {
+            this.Players.CollectionChanged += this.Players_CollectionChanged;
+
             this.AddTrack();
             this.AddTrack();
             this.AddTrack();
@@ -38,9 +41,14 @@ namespace RazorComponent.Components.Pages
             return base.OnInitAsync();
         }
 
+        private void Players_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            this.RefreshPlayerRanking();
+        }
+
         protected void AddTrack()
         {
-            this.Tracks.Add(new Track() { Number = this.Tracks.Count + 1, Par = 4 });
+            this.Tracks.Add(new Track() { Number = this.Tracks.Count + 1, Par = this.TrackParNumberToAdd });
         }
 
         protected void AddPlayer(string name)
@@ -50,12 +58,12 @@ namespace RazorComponent.Components.Pages
                 name = $"Player {this.Players.Count + 1}";
             }
 
-            var p = new Player() { Name = name };
-            this.Players.Add(p);
+            var p = new Player() { Id = (this.Players.Count + 1), Name = name };
             foreach (var track in this.Tracks)
             { // bei allen bestehenden tracks den neuen player hinzufügen
-                track.PlayerHits[p] = null;
+                track.PlayerHits[p.Id] = null;
             }
+            this.Players.Add(p);
 
             this.PlayerNameToAdd = null;
             this.RepositionEditColumn();
@@ -66,17 +74,17 @@ namespace RazorComponent.Components.Pages
             if (this.Players.Count > 0)
             {
                 var p = this.Players.Last();
-                this.Players.Remove(p);
                 foreach (var track in this.Tracks)
                 {
-                    track.PlayerHits.Remove(p);
+                    track.PlayerHits.Remove(p.Id);
                 }
+                this.Players.Remove(p);
 
                 this.RepositionEditColumn();
             }
         }
 
-        private void RepositionEditColumn()
+        protected void RepositionEditColumn()
         {
             this.LastColumnToggleWorkaroundForDisplayIndex = false;
 
@@ -93,7 +101,7 @@ namespace RazorComponent.Components.Pages
             var t = new Track() { Number = this.Tracks.Count + 1, Par = par };
             foreach (var player in this.Players)
             {
-                t.PlayerHits[player] = null;
+                t.PlayerHits[player.Id] = null;
             }
 
             this.Tracks.Add(t);
@@ -112,15 +120,14 @@ namespace RazorComponent.Components.Pages
 
         private void RefreshDataGridHeight(int rowCount)
         {
-            if (rowCount < 5)
-                rowCount = 5;
-
-            if (rowCount > 15)
-                rowCount = 15;
+            if (rowCount < 3)
+            {
+                rowCount = 3;
+            }
 
             this.Invoke(() =>
             {
-                this.DataGridHeight = (62M * rowCount) + 125M;
+                this.DataGridHeight = (42M * rowCount) + 37M;
                 this.StateHasChanged();
             });
         }
@@ -138,11 +145,31 @@ namespace RazorComponent.Components.Pages
         protected void EndEdit()
         {
             this.CurrentTrack = null;
+
+            this.RefreshPlayerRanking();
+        }
+
+        private void RefreshPlayerRanking()
+        {
+            this.RankedPlayers = this.Players
+                .OrderByDescending(a => this.Tracks.Count(b => b.PlayerHits[a.Id] != null)) // absteigend nach anzahl gespielter kurse
+                .ThenBy(a => this.Tracks.Sum(b => b.PlayerHits[a.Id])) // aufsteigend nach summe der benötigten schläge
+                .ToList();
+        }
+
+        protected void ResetGame()
+        {
+            this.Players.Clear();
+            this.Tracks.Clear();
+            this.PlayerNameToAdd = null;
+            this.RepositionEditColumn();
+            this.RefreshDataGridHeight(this.Tracks.Count);
         }
     }
 
     public class Player
     {
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 
@@ -151,6 +178,6 @@ namespace RazorComponent.Components.Pages
         public int Number { get; set; }
         public int Par { get; set; }
 
-        public Dictionary<Player, int?> PlayerHits { get; set; } = new Dictionary<Player, int?>();
+        public Dictionary<int, int?> PlayerHits { get; set; } = new Dictionary<int, int?>();
     }
 }
