@@ -1,0 +1,145 @@
+﻿@page "/MiniGolf"
+@inherits RazorComponent.Components.Pages.MiniGolfModel
+@using RazorComponent.Components.Pages
+
+<h1>MiniGolf scoreboard</h1>
+
+<TelerikGrid Data=@this.Tracks Height="@DataGridHeight">
+    <TelerikGridToolBar>
+        <span class="c-rowElement">
+            <TelerikButton OnClick="@RemovePlayer">-</TelerikButton>
+            <TelerikTextBox Label="Player" bind-value="@PlayerNameToAdd" />
+            <TelerikButton OnClick="@(() => AddPlayer(this.PlayerNameToAdd))">+</TelerikButton>
+        </span>
+
+        <span class="c-rowElement">
+            <TelerikButton OnClick="@RemoveTrack">-</TelerikButton>
+            <span class="k-widget k-numerictextbox c-numberInputField">
+                <span class="k-numeric-wrap">
+                    <input class="k-input k-formatted-value" bind="@this.TrackParNumberToAdd" title="Par"/>
+                    <span class="k-select">
+                        <span class="k-link k-link-increase" aria-label="Increase value" title="Increase value" onclick="@(() => { if (this.TrackParNumberToAdd < 7) this.TrackParNumberToAdd++; })">
+                            <span class="k-icon k-i-arrow-n"></span>
+                        </span>
+                        <span class="k-link k-link-decrease" aria-label="Decrease value" title="Decrease value" onclick="@(() => { if (this.TrackParNumberToAdd > 1) this.TrackParNumberToAdd--; })">
+                            <span class="k-icon k-i-arrow-s"></span>
+                        </span>
+                    </span>
+                </span>
+            </span>
+            <TelerikButton OnClick="@(() => AddTrack(this.TrackParNumberToAdd))">+</TelerikButton>
+        </span>
+    </TelerikGridToolBar>
+
+    <TelerikGridColumns>
+        <TelerikGridColumn Title="" Editable="false" Width="40">
+            <Template>
+                <div class="@(((context as Track) == this.CurrentTrack) ? "c-currentEditDot" : "")" />
+            </Template>
+        </TelerikGridColumn>
+
+        <TelerikGridColumn Title="No." Field="@nameof(Track.Number)" Editable="false" Width="55">
+            <Template>
+                <div class="c-alignCenter">@((context as Track).Number)</div>
+            </Template>
+        </TelerikGridColumn>
+
+        <TelerikGridColumn Title="Par" Field="@nameof(Track.Par)" Editable="false" Width="55">
+            <Template>
+                <div class="c-alignCenter">@((context as Track).Par)</div>
+            </Template>
+        </TelerikGridColumn>
+
+        @if (this.Players.Count == 0)
+        {
+            <TelerikGridColumn Title="" Field="" />
+        }
+
+        @foreach (var player in this.Players)
+        {
+            <TelerikGridColumn Title="@player.Name">
+                <Template>
+                    <div class="c-alignCenter">
+                        @if (context is Track t)
+                        {
+                            if (t == this.CurrentTrack)
+                            {
+                                <input type="number" bind="@(t.PlayerHits[player])" min="1" max="7" />
+                            }
+                            else
+                            {
+                                <div class="c-alignCenter">@(t.PlayerHits[player])</div>
+                            }
+                        }
+                    </div>
+                </Template>
+            </TelerikGridColumn>
+        }
+
+        @if (this.LastColumnToggleWorkaroundForDisplayIndex)
+        {
+            <TelerikGridColumn Title="" Editable="false" Width="110">
+                <Template>
+                    @if ((context == this.CurrentTrack))
+                    {
+                        <TelerikButton Icon="save" Primary="true" Class="c-gridEditButton" OnClick="@this.EndEdit">finish</TelerikButton>
+
+                    }
+                    else
+                    {
+                        <TelerikButton Icon="edit" Primary="true" Class="c-gridEditButton" OnClick="@(() => this.StartEdit(context as Track))">start</TelerikButton>
+                    }
+
+                </Template>
+            </TelerikGridColumn>
+        }
+    </TelerikGridColumns>
+</TelerikGrid>
+
+<style>
+    .c-rowElement {
+        white-space: nowrap;
+        padding-right: 20px;
+    }
+
+    .c-numberInputField {
+        width: 70px;
+    }
+
+    .c-alignCenter {
+        text-align: center;
+    }
+
+    div.c-currentEditDot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border-width: medium;
+        border-style: solid;
+        border-color: slategray;
+        background-color: darkred;
+    }
+
+    .c-gridEditButton {
+        width: 85px;
+    }
+
+    /*div.k-window-titlebar.k-dialog-titlebar.k-header div.k-window-title.k-dialog-title {
+        display: none;
+    }
+
+    div.k-window-titlebar.k-dialog-titlebar.k-header button.k-bare.k-button {
+        display: none;
+    }
+
+    div.k-window-titlebar.k-dialog-titlebar.k-header:after {
+        content: "current course";
+        font-size: 1.2em;
+        font-weight: bold;
+    }*/
+
+    th.k-header {
+        font-weight: bold;
+        text-align: center;
+    }
+</style>

@@ -8,15 +8,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RazorComponentTest.Components;
-using RazorComponentTest.Services;
+using RazorComponent.Components;
+using RazorComponent.Services;
 using Telerik.Blazor.ExtensionMethods;
 using Telerik.Blazor;
 using Telerik.Generated.Blazor.Components;
 using Telerik.Blazor.Common.Parsers;
 using Telerik.Blazor.Components;
 
-namespace RazorComponentTest
+namespace RazorComponent
 {
     public class Startup
     {
