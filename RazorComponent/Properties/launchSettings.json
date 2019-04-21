@@ -18,7 +18,7 @@
     "RazorComponent": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "MiniGolf",
+      "launchUrl": "MiniatureGolf",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

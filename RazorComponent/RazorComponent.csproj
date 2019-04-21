@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <_RazorComponentInclude>Components\**\*.cshtml</_RazorComponentInclude>
   </PropertyGroup>
 
@@ -19,6 +19,16 @@
     <PackageReference Include="Telerik.UI.for.Blazor" Version="0.4.0" />
 
     <UpToDateCheckInput Include="@(Content-&gt;WithMetadataValue('Extension', '.razor'))" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="hosting.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

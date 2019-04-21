@@ -1,20 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RazorComponent.Components;
 using RazorComponent.Services;
-using Telerik.Blazor.ExtensionMethods;
-using Telerik.Blazor;
-using Telerik.Generated.Blazor.Components;
-using Telerik.Blazor.Common.Parsers;
-using Telerik.Blazor.Components;
+using RazorComponent.Services.MiniatureGolf;
 
 namespace RazorComponent
 {
@@ -32,6 +22,8 @@ namespace RazorComponent
             services.AddSingleton<WeatherForecastService>();
 
             services.AddTelerikBlazor();
+
+            services.AddSingleton<GameService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,7 +39,7 @@ namespace RazorComponent
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting(routes =>
