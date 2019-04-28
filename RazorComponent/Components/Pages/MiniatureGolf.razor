@@ -96,13 +96,13 @@
             </TelerikGridColumn>
 
 
-            <TelerikGridColumn Title="No." Field="@nameof(Course.Number)" Editable="false" Width="37">
+            <TelerikGridColumn Title="No." Field="@nameof(Course.Number)" Editable="false" Width="40">
                 <Template>
                     <div class="c-alignCenter">@((context as Course).Number)</div>
                 </Template>
             </TelerikGridColumn>
 
-            <TelerikGridColumn Title="Par" Field="@nameof(Course.Par)" Editable="false" Width="37">
+            <TelerikGridColumn Title="Par" Field="@nameof(Course.Par)" Editable="false" Width="40">
                 @*Title="@($"Par ({this.Gamestate.Courses.Where(a => a.PlayerHits.Any(b => b.Value != null)).Sum(a => a.Par)})")"*@
                 <Template>
                     <div class="c-alignCenter">@((context as Course).Par)</div>

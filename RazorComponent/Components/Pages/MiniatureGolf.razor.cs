@@ -291,8 +291,6 @@ namespace RazorComponent.Components.Pages
             {
                 this.Gamestate = gs;
 
-                gs.EditorHttpContext = this.HttpConntextAccessor.HttpContext;
-
                 this.RefreshPlayerRanking();
 
                 this.Gamestate.Status = Gamestatus.Configuring;
